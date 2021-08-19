@@ -1,0 +1,20 @@
+[package]
+name    = "threader"
+version = "0.0.0"
+authors = ["Liam <liam@scalzulli.com>"]
+edition = "2018"
+
+[[bin]]
+name = "threader"
+path = "src/main.rs"
+
+[dependencies]
+dotenv         = "0.15.0"
+egg-mode       = "0.16.0"
+pulldown-cmark = "0.8.0"
+snafu          = "0.6.10"
+structopt      = "0.3.22"
+
+[dependencies.tokio]
+tokio    = "1.10.0"
+features = ["full"]

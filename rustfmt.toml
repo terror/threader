@@ -1,0 +1,11 @@
+brace_style                  = "PreferSameLine"
+edition                      = "2018"
+enum_discrim_align_threshold = 20
+format_code_in_doc_comments  = true
+max_width                    = 80
+newline_style                = "Unix"
+struct_field_align_threshold = 20
+struct_lit_single_line       = false
+tab_spaces                   = 2
+use_field_init_shorthand     = true
+use_try_shorthand            = true
