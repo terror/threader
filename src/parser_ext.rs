@@ -1,15 +1,19 @@
 use crate::common::*;
 
 pub trait ParserExt<'a> {
-  fn between(&self, tag: Tag) -> Vec<String>;
+  fn between(&self, content: &str, tag: Tag) -> Vec<String>;
 }
 
 impl<'a> ParserExt<'a> for Parser<'a> {
-  fn between(&self, tag: Tag) -> Vec<String> {
+  // I know this creates a new parser, cba to change this crap
+  // why doesn't pulldown_cmark::Parser just implement Clone ffs?
+  fn between(&self, content: &str, tag: Tag) -> Vec<String> {
+    let parser = Parser::new(content);
+
     let mut inside = false;
     let mut ret = Vec::new();
 
-    for event in self {
+    for event in parser {
       match event {
         Event::Start(start_tag) => {
           if start_tag == tag {

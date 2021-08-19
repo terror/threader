@@ -17,16 +17,13 @@ impl<'a> File<'a> {
 
     let parser = Parser::new(&content);
 
-    let title = &parser.between(Tag::Heading(2)).first().cloned();
+    let title = parser.between(&content, Tag::Heading(2)).first().cloned();
 
-    let tweets = &parser
-      .between(Tag::BlockQuote)
+    let tweets = parser
+      .between(&content, Tag::BlockQuote)
       .iter()
       .enumerate()
-      .map(|(i, item)| Tweet {
-        id:   i as i64,
-        text: item.to_string(),
-      })
+      .map(|(i, item)| Tweet::new((i + 1) as i64, item.to_string()))
       .collect::<Vec<Tweet>>();
 
     Ok(Thread::new(title.to_owned(), tweets.to_owned()))
