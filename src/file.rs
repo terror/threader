@@ -15,12 +15,9 @@ impl<'a> File<'a> {
   pub fn parse(&self) -> Result<Thread> {
     let content = fs::read_to_string(&self.path)?;
 
-    let parser = Parser::new(&content);
+    let title = between(&content, Tag::Heading(2)).first().cloned();
 
-    let title = parser.between(&content, Tag::Heading(2)).first().cloned();
-
-    let tweets = parser
-      .between(&content, Tag::BlockQuote)
+    let tweets = between(&content, Tag::BlockQuote)
       .iter()
       .enumerate()
       .map(|(i, item)| Tweet::new((i + 1) as i64, item.to_string()))
