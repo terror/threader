@@ -1,5 +1,7 @@
 use crate::common::*;
 
+// TODO: deal with twitter's character limit
+
 #[derive(Debug, Clone)]
 pub struct Tweet {
   id:   i64,
@@ -14,14 +16,11 @@ impl Tweet {
     }
   }
 
-  pub fn add_title(&self, title: Option<String>) -> Self {
+  pub fn add_title(&self, title: Option<String>) -> String {
     if let Some(title) = title {
-      return Tweet {
-        id:   self.id,
-        text: format!("{}\n\n{}", title, self.text),
-      };
+      return format!("{}\n\n{}/ {}", title, self.id, self.text);
     }
-    self.clone()
+    format!("{}/ {}", self.id, self.text)
   }
 }
 

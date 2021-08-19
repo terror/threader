@@ -40,7 +40,7 @@ mod util;
 async fn main() {
   dotenv().ok();
   match Opt::from_args().run().await {
-    Ok(()) => {}
+    Ok(()) => println!("Thread sent! (you should probably check)"),
     Err(e) => eprintln!("{}", e),
   }
 }

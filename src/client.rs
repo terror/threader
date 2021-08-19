@@ -7,41 +7,50 @@ pub struct Client {
 
 impl Client {
   pub async fn new() -> Result<Self> {
-    // let auth_url = auth::authorize_url(
-    //   &auth::request_token(
-    //     &KeyPair::new(dotenv::var("API_KEY")?, dotenv::var("API_SECRET")?),
-    //     "oob",
-    //   )
-    //   .await?,
-    // );
+    let con_token =
+      KeyPair::new(dotenv::var("API_KEY")?, dotenv::var("API_SECRET")?);
+
+    let request_token = auth::request_token(&con_token, "oob").await?;
+
+    let auth_url = auth::authorize_url(&request_token);
+
+    println!("Authenticate here: {}", auth_url);
+
+    // read pin from user
+    let mut verifier = String::new();
+    io::stdin().read_line(&mut verifier)?;
+    println!("PIN: {}", verifier);
+
+    // get token
+    let (token, user_id, screen_name) =
+      auth::access_token(con_token, &request_token, verifier).await?;
+
+    println!("Logged in as ({} - {})", user_id, screen_name);
+
     Ok(Client {
-      token: egg_mode::auth::bearer_token(&egg_mode::KeyPair::new(
-        dotenv::var("API_KEY")?,
-        dotenv::var("API_SECRET")?,
-      ))
-      .await?,
+      token,
     })
   }
 
   pub async fn tweet(&self, thread: Thread) -> Result<()> {
     let tweets = thread.tweets();
 
+    let mut prev: Option<Response<egg_mode::tweet::Tweet>> = None;
+
     for i in 0..thread.length() {
-      match i {
+      let index = i as usize;
+      match index {
         0 => {
-          DraftTweet::new(
-            tweets[i as usize]
-              .clone()
-              .add_title(thread.title())
-              .to_string(),
-          )
-          .send(&self.token)
-          .await?;
+          let tweet =
+            DraftTweet::new(tweets[index].clone().add_title(thread.title()));
+          prev = Some(tweet.send(&self.token).await?);
         }
         _ => {
-          DraftTweet::new(tweets[i as usize].clone().to_string())
-            .send(&self.token)
-            .await?;
+          if let Some(prev_tweet) = prev {
+            let tweet = DraftTweet::new(tweets[index].clone().to_string())
+              .in_reply_to(prev_tweet.response.id);
+            prev = Some(tweet.send(&self.token).await?);
+          }
         }
       }
     }

@@ -9,8 +9,8 @@ website.
 
 ### Installation
 
-(For now) You can clone the project and install the binary using the following
-command in the project root:
+(For now) You can clone the project and install the binary using by invoking the
+following command in the project root:
 
 ```bash
 $ cargo install --path .

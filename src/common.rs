@@ -1,9 +1,13 @@
 // std
-pub use std::{env, fmt, fs, path::PathBuf};
+pub use std::{
+  env, fmt, fs,
+  io::{self, prelude::*},
+  path::PathBuf,
+};
 
 // dependencies
 pub use dotenv::dotenv;
-pub use egg_mode::{self, auth, tweet::DraftTweet, KeyPair};
+pub use egg_mode::{self, auth, tweet::DraftTweet, KeyPair, Response};
 pub use pulldown_cmark::{Event, Parser, Tag};
 pub use snafu::{ResultExt, Snafu};
 pub use structopt::StructOpt;
