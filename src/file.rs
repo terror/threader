@@ -26,3 +26,33 @@ impl<'a> File<'a> {
     Ok(Thread::new(title, tweets))
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  fn strip(s: String) -> String {
+    dedent(s.strip_prefix("\n").unwrap())
+  }
+
+  #[test]
+  fn exceed_character_limit() {
+    in_temp_dir!({
+      let directory = env::current_dir().unwrap().join("thread.md");
+
+      create_file(
+        &directory,
+        &strip(r#"
+          ## Thread
+
+          > Cool stuff bro
+
+          > This tweet exceeds Twitter's character limit. Writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up spaceeeeeeeee.
+      "#.into())).unwrap();
+
+      let file = File::new(&directory);
+
+      assert!(file.parse().is_err());
+    });
+  }
+}
