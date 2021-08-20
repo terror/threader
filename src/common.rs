@@ -13,9 +13,6 @@ pub use snafu::{ResultExt, Snafu};
 pub use structopt::StructOpt;
 pub use tokio;
 
-// modules
-pub(crate) use crate::error;
-
 // struct and enums
 pub use crate::{
   client::Client,

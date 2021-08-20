@@ -1,8 +1,15 @@
 [package]
-name    = "threader"
-version = "0.0.0"
-authors = ["Liam <liam@scalzulli.com>"]
-edition = "2018"
+name        = "threader"
+version     = "0.0.0"
+authors     = ["Liam <liam@scalzulli.com>"]
+edition     = "2018"
+description = "Craft Twitter threads using Markdown files"
+license     = "CC0-1.0"
+homepage    = "https://github.com/terror/threader"
+repository  = "https://github.com/terror/threader"
+categories  = ["command-line-utilities"]
+keywords    = ["command-line", "twitter", "twitter-threads", "utility"]
+resolver    = "2"
 
 [[bin]]
 name = "threader"

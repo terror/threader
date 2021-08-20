@@ -19,4 +19,11 @@ pub enum Error {
 
   #[snafu(context(false), display("IO error: {}", source))]
   Io { source: std::io::Error },
+
+  #[snafu(display(
+    "Tweet with content {} is over Twitter's character limit by {}",
+    content,
+    over_by
+  ))]
+  CharacterLimit { content: String, over_by: usize },
 }
