@@ -1,5 +1,8 @@
 use crate::common::*;
 
+#[macro_use]
+pub mod test_utils;
+
 mod client;
 mod common;
 mod error;

@@ -1,6 +1,6 @@
 use crate::common::*;
 
-// TODO: deal with twitter's character limit
+const LIMIT: usize = 280;
 
 #[derive(Debug, Clone)]
 pub struct Tweet {
@@ -9,11 +9,20 @@ pub struct Tweet {
 }
 
 impl Tweet {
-  pub fn new(id: i64, text: String) -> Self {
-    Tweet {
+  pub fn new(id: i64, text: String) -> Result<Self> {
+    let size = text.chars().count();
+
+    if size > LIMIT {
+      return Err(Error::CharacterLimit {
+        over_by: size - LIMIT,
+        content: text,
+      });
+    }
+
+    Ok(Tweet {
       id,
       text,
-    }
+    })
   }
 
   pub fn add_title(&self, title: Option<String>) -> String {

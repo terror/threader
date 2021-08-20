@@ -1,6 +1,7 @@
 // std
 pub use std::{
-  env, fmt, fs,
+  env, fmt,
+  fs::{self, File as FSFile},
   io::{self, prelude::*},
   path::PathBuf,
 };
@@ -13,8 +14,13 @@ pub use snafu::{ResultExt, Snafu};
 pub use structopt::StructOpt;
 pub use tokio;
 
-// modules
-pub(crate) use crate::error;
+// test dependencies
+#[cfg(test)]
+pub use {tempfile::TempDir, textwrap::dedent};
+
+// modules used in tests
+#[cfg(test)]
+pub use crate::test_utils::*;
 
 // struct and enums
 pub use crate::{
