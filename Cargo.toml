@@ -23,7 +23,7 @@ snafu          = "0.6.10"
 structopt      = "0.3.22"
 
 [dependencies.tokio]
-tokio    = "1.10.0"
+version  = "1.10.0"
 features = ["full"]
 
 [dev-dependencies]

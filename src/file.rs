@@ -2,11 +2,11 @@ use crate::common::*;
 
 #[derive(Debug)]
 pub struct File<'a> {
-  path: &'a PathBuf,
+  path: &'a Path,
 }
 
 impl<'a> File<'a> {
-  pub fn new(path: &'a PathBuf) -> Self {
+  pub fn new(path: &'a Path) -> Self {
     Self {
       path,
     }
@@ -32,7 +32,7 @@ mod tests {
   use super::*;
 
   fn strip(s: String) -> String {
-    dedent(s.strip_prefix("\n").unwrap())
+    dedent(s.strip_prefix('\n').unwrap())
   }
 
   #[test]
