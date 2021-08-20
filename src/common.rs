@@ -3,7 +3,7 @@ pub use std::{
   env, fmt,
   fs::{self, File as FSFile},
   io::{self, prelude::*},
-  path::PathBuf,
+  path::{Path, PathBuf},
 };
 
 // dependencies

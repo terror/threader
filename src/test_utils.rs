@@ -10,7 +10,7 @@ macro_rules! in_temp_dir {
   };
 }
 
-pub fn create_file(path: &PathBuf, content: &str) -> Result<()> {
+pub fn create_file(path: &Path, content: &str) -> Result<()> {
   let mut file = FSFile::create(path)?;
   file.write_all(content.as_bytes())?;
   Ok(())
