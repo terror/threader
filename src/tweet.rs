@@ -25,16 +25,13 @@ impl Tweet {
     })
   }
 
-  pub fn add_title(&self, title: Option<String>) -> String {
+  pub fn to_string(&self, title: Option<String>, thread_length: i64) -> String {
     if let Some(title) = title {
-      return format!("{}\n\n{}/ {}", title, self.id, self.text);
+      return format!(
+        "{}\n\n{}/{} {}",
+        title, self.id, thread_length, self.text
+      );
     }
-    format!("{}/ {}", self.id, self.text)
-  }
-}
-
-impl fmt::Display for Tweet {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}/ {}", self.id, self.text)
+    format!("{}/{} {}", self.id, thread_length, self.text)
   }
 }

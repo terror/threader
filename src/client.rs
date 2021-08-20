@@ -41,14 +41,19 @@ impl Client {
       let index = i as usize;
       match index {
         0 => {
-          let tweet =
-            DraftTweet::new(tweets[index].clone().add_title(thread.title()));
+          let tweet = DraftTweet::new(
+            tweets[index]
+              .clone()
+              .to_string(thread.title(), thread.length()),
+          );
           prev = Some(tweet.send(&self.token).await?);
         }
         _ => {
           if let Some(prev_tweet) = prev {
-            let tweet = DraftTweet::new(tweets[index].clone().to_string())
-              .in_reply_to(prev_tweet.response.id);
+            let tweet = DraftTweet::new(
+              tweets[index].clone().to_string(None, thread.length()),
+            )
+            .in_reply_to(prev_tweet.response.id);
             prev = Some(tweet.send(&self.token).await?);
           }
         }
