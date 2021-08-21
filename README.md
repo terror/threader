@@ -19,12 +19,19 @@ $ cargo install --path .
 ### Usage
 
 In order to use this, you must sign up for a Twitter developer account and grab
-a Twitter API key and token pair and set them in a `.env` file within the
+the following information:
+
+- Consumer key and secret pair
+- Access token key and secret pair
+
+Once you have the information above set them in a `.env` file within the
 project root:
 
 ```.
-API_KEY=
-API_TOKEN=
+CONSUMER_KEY=
+CONSUMER_SECRET=
+ACCESS_TOKEN=
+ACCESS_SECRET=
 ```
 
 Here is a file called `thread.md` which we want to tweet. We can specify an
