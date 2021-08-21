@@ -16,7 +16,7 @@ mod tweet;
 async fn main() {
   dotenv().ok();
   match Opt::from_args().run().await {
-    Ok(()) => println!("Thread sent! (you should probably check)"),
+    Ok(()) => println!("Thread sent!"),
     Err(e) => eprintln!("{}", e),
   }
 }
