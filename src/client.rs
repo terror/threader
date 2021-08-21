@@ -16,12 +16,9 @@ impl Client {
 
     println!("Authenticate here: {}", auth_url);
 
-    // read pin from user
     let mut verifier = String::new();
     io::stdin().read_line(&mut verifier)?;
-    println!("PIN: {}", verifier);
 
-    // get token
     let (token, user_id, screen_name) =
       auth::access_token(con_token, &request_token, verifier).await?;
 
@@ -32,29 +29,20 @@ impl Client {
     })
   }
 
-  pub async fn tweet(&self, thread: Thread) -> Result<()> {
-    let tweets = thread.tweets();
-
+  pub async fn tweet(&self, tweets: Vec<Tweet>) -> Result<()> {
     let mut prev: Option<Response<egg_mode::tweet::Tweet>> = None;
 
-    for i in 0..thread.length() {
-      let index = i as usize;
+    for (index, tweet) in tweets.iter().enumerate() {
       match index {
         0 => {
-          let tweet = DraftTweet::new(
-            tweets[index]
-              .clone()
-              .to_string(thread.title(), thread.length()),
-          );
-          prev = Some(tweet.send(&self.token).await?);
+          let draft = DraftTweet::new(tweet.content());
+          prev = Some(draft.send(&self.token).await?);
         }
         _ => {
           if let Some(prev_tweet) = prev {
-            let tweet = DraftTweet::new(
-              tweets[index].clone().to_string(None, thread.length()),
-            )
-            .in_reply_to(prev_tweet.response.id);
-            prev = Some(tweet.send(&self.token).await?);
+            let draft = DraftTweet::new(tweet.content())
+              .in_reply_to(prev_tweet.response.id);
+            prev = Some(draft.send(&self.token).await?);
           }
         }
       }

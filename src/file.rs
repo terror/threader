@@ -12,18 +12,32 @@ impl<'a> File<'a> {
     }
   }
 
-  pub fn parse(&self) -> Result<Thread> {
+  pub fn parse(&self) -> Result<Vec<Tweet>> {
     let content = fs::read_to_string(&self.path)?;
 
-    let title = between(&content, Tag::Heading(2)).first().cloned();
+    let parser = Parser::new(&content);
+
+    let title = parser.between(Tag::Heading(2)).first().cloned();
+
+    let paragraphs = parser.between(Tag::Paragraph);
 
     let mut tweets = Vec::new();
-    for (i, content) in between(&content, Tag::BlockQuote).iter().enumerate() {
-      let tweet = Tweet::new((i + 1) as i64, content.to_string())?;
-      tweets.push(tweet);
+
+    for (i, content) in paragraphs.iter().enumerate() {
+      let index = i as i64;
+      match index {
+        0 => tweets.push(Tweet::new(
+          Prefix::new(index + 1, paragraphs.len() as i64, &title),
+          content.to_string(),
+        )?),
+        _ => tweets.push(Tweet::new(
+          Prefix::new(index + 1, paragraphs.len() as i64, &None),
+          content.to_string(),
+        )?),
+      }
     }
 
-    Ok(Thread::new(title, tweets))
+    Ok(tweets)
   }
 }
 
@@ -31,26 +45,58 @@ impl<'a> File<'a> {
 mod tests {
   use super::*;
 
-  fn strip(s: String) -> String {
-    dedent(s.strip_prefix('\n').unwrap())
+  #[test]
+  fn parse() {
+    in_temp_dir!({
+      let path = env::current_dir().unwrap().join("thread.md");
+
+      create_file(
+        &path,
+        &strip(
+        r#"
+          ## Thread
+
+          Tweet A
+
+          Tweet B
+
+          Tweet C
+      "#
+          .into(),
+        ),
+      )
+      .unwrap();
+
+      let file = File::new(&path);
+
+      let tweets = file.parse();
+
+      assert!(tweets.is_ok());
+      assert_eq!(tweets.unwrap().len(), 3);
+    });
   }
 
   #[test]
   fn exceed_character_limit() {
     in_temp_dir!({
-      let directory = env::current_dir().unwrap().join("thread.md");
+      let path = env::current_dir().unwrap().join("thread.md");
 
       create_file(
-        &directory,
-        &strip(r#"
+        &path,
+        &strip(
+        r#"
           ## Thread
 
-          > Cool stuff bro
+          Cool stuff bro
 
-          > This tweet exceeds Twitter's character limit. Writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up spaceeeeeeeee.
-      "#.into())).unwrap();
+          This tweet exceeds Twitter's character limit.  Writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space.
+      "#
+          .into(),
+        ),
+      )
+      .unwrap();
 
-      let file = File::new(&directory);
+      let file = File::new(&path);
 
       assert!(file.parse().is_err());
     });
