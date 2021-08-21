@@ -30,8 +30,8 @@ project root:
 ```.
 CONSUMER_KEY=
 CONSUMER_SECRET=
-ACCESS_TOKEN=
-ACCESS_SECRET=
+ACCESS_TOKEN_KEY=
+ACCESS_TOKEN_SECRET=
 ```
 
 Here is a file called `thread.md` which we want to tweet. We can specify an
@@ -39,21 +39,24 @@ optional thread `title` which will get displayed at the top of the first tweet.
 As you can see, individual tweets are delimited via a markdown `paragraph`.
 
 ```markdown
-## How to Get Rich (without getting lucky):
+Threader is a command-line tool for crafting twitter threads
 
-Seek wealth, not money or status. Wealth is having assets that earn while you sleep. Money is how we transfer time and wealth. Status is your place in the social hierarchy.
+Write stuff down in a Markdown file and invoke a single command to publish your thread.
 
-Understand that ethical wealth creation is possible. If you secretly despise wealth, it will elude you.
+This could be useful if you write an article using Markdown and want to post it to your blog and Twitter at the same time.
 
-Ignore people playing status games. They gain status by attacking people playing wealth creation games.
+Check out the code on GitHub: https://github.com/terror/threader
 ```
 
 Assuming your environment is all set up, you can invoke the following command
 to convert the following file into a Twitter thread and then have it tweeted on
 your behalf:
+
 ```bash
 threader --file thread.md
 ```
+
+And then [view it on Twitter](https://twitter.com/436/status/1429214620510822409)!
 
 ### Prior Art
 
