@@ -1,7 +1,7 @@
 ## Test
 
-> This is a test thread
+This is a test thread
 
-> hello?
+hello?
 
-> this shit works? https://github.com/terror/threader
+this shit works? https://github.com/terror/threader

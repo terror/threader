@@ -4,34 +4,28 @@ const LIMIT: usize = 280;
 
 #[derive(Debug, Clone)]
 pub struct Tweet {
-  id:   i64,
-  text: String,
+  content: String,
 }
 
 impl Tweet {
-  pub fn new(id: i64, text: String) -> Result<Self> {
-    let size = text.chars().count();
+  pub fn new(prefix: Prefix, content: String) -> Result<Self> {
+    let content = format!("{} {}", prefix, content);
+
+    let size = content.chars().count();
 
     if size > LIMIT {
       return Err(Error::CharacterLimit {
         over_by: size - LIMIT,
-        content: text,
+        content,
       });
     }
 
     Ok(Tweet {
-      id,
-      text,
+      content,
     })
   }
 
-  pub fn to_string(&self, title: Option<String>, thread_length: i64) -> String {
-    if let Some(title) = title {
-      return format!(
-        "{}\n\n{}/{} {}",
-        title, self.id, thread_length, self.text
-      );
-    }
-    format!("{}/{} {}", self.id, thread_length, self.text)
+  pub fn content(&self) -> String {
+    self.content.clone()
   }
 }
