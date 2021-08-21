@@ -8,7 +8,7 @@ pub use std::{
 
 // dependencies
 pub use dotenv::dotenv;
-pub use egg_mode::{self, auth, tweet::DraftTweet, KeyPair, Response};
+pub use egg_mode::{self, auth, tweet::DraftTweet, KeyPair, Response, Token};
 pub use pulldown_cmark::{Event, Parser as MarkdownParser, Tag};
 pub use snafu::{ResultExt, Snafu};
 pub use structopt::StructOpt;

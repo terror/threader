@@ -7,25 +7,17 @@ pub struct Client {
 
 impl Client {
   pub async fn new() -> Result<Self> {
-    let con_token =
-      KeyPair::new(dotenv::var("API_KEY")?, dotenv::var("API_SECRET")?);
-
-    let request_token = auth::request_token(&con_token, "oob").await?;
-
-    let auth_url = auth::authorize_url(&request_token);
-
-    println!("Authenticate here: {}", auth_url);
-
-    let mut verifier = String::new();
-    io::stdin().read_line(&mut verifier)?;
-
-    let (token, user_id, screen_name) =
-      auth::access_token(con_token, &request_token, verifier).await?;
-
-    println!("Logged in as ({} - {})", user_id, screen_name);
-
     Ok(Client {
-      token,
+      token: Token::Access {
+        consumer: KeyPair::new(
+          dotenv::var("CONSUMER_KEY")?,
+          dotenv::var("CONSUMER_SECRET")?,
+        ),
+        access:   KeyPair::new(
+          dotenv::var("ACCESS_TOKEN_KEY")?,
+          dotenv::var("ACCESS_TOKEN_SECRET")?,
+        ),
+      },
     })
   }
 

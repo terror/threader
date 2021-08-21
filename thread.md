@@ -1,7 +1,9 @@
-## Test
+Threader is a command-line tool for crafting twitter threads
 
-This is a test thread
+Write stuff down in a Markdown file and invoke a single command to publish your
+thread.
 
-hello?
+This could be useful if you write an article using Markdown and want to post
+it to your blog and twitter at the same time.
 
-this shit works? https://github.com/terror/threader
+Check out the code on GitHub: https://github.com/terror/threader
