@@ -53,7 +53,7 @@ mod tests {
       create_file(
         &path,
         &strip(
-        r#"
+          r#"
           ## Thread
 
           Tweet A
