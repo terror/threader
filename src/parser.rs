@@ -13,7 +13,7 @@ impl<'a> Parser<'a> {
   }
 
   pub fn between(&self, tag: Tag) -> Vec<String> {
-    let parser = MarkdownParser::new(&self.content);
+    let parser = MarkdownParser::new(self.content);
 
     let mut inside = false;
     let mut ret = Vec::new();
