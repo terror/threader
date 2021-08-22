@@ -1,7 +1,6 @@
 // std
 pub use std::{
-  env, fmt,
-  fs::{self, File as FSFile},
+  env, fmt, fs,
   io::{self, prelude::*},
   path::{Path, PathBuf},
 };
@@ -16,7 +15,9 @@ pub use tokio;
 
 // test dependencies
 #[cfg(test)]
-pub use {tempfile::TempDir, textwrap::dedent};
+pub use {
+  rstest::*, std::fs::File as TestFile, tempfile::TempDir, textwrap::dedent,
+};
 
 // modules used in tests
 #[cfg(test)]
