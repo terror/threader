@@ -1,6 +1,7 @@
 use crate::common::*;
 
 #[macro_use]
+#[cfg(test)]
 pub mod test_utils;
 
 mod client;

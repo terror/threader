@@ -45,60 +45,51 @@ impl<'a> File<'a> {
 mod tests {
   use super::*;
 
-  #[test]
-  fn parse() {
+  #[rstest]
+  #[case("", 0)]
+  #[case("hello, world!", 1)]
+  #[case(
+    r#"
+    ## Title
+
+    Tweet A
+
+    Tweet B
+
+    Tweet C
+  "#,
+    3
+  )]
+  fn parse(#[case] content: &str, #[case] length: usize) {
     in_temp_dir!({
       let path = env::current_dir().unwrap().join("thread.md");
 
-      create_file(
-        &path,
-        &strip(
-          r#"
-          ## Thread
+      create_file(&path, &strip(content.to_owned())).unwrap();
 
-          Tweet A
-
-          Tweet B
-
-          Tweet C
-      "#
-          .into(),
-        ),
-      )
-      .unwrap();
-
-      let file = File::new(&path);
-
-      let tweets = file.parse();
+      let tweets = File::new(&path).parse();
 
       assert!(tweets.is_ok());
-      assert_eq!(tweets.unwrap().len(), 3);
+      assert_eq!(tweets.unwrap().len(), length);
     });
   }
 
-  #[test]
-  fn exceed_character_limit() {
+  #[rstest]
+  #[case(r#"
+    ## Thread
+
+    Cool stuff bro
+
+    This tweet exceeds Twitter's character limit.  Writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space.
+  "#)]
+  fn exceed_character_limit(#[case] content: &str) {
     in_temp_dir!({
       let path = env::current_dir().unwrap().join("thread.md");
 
-      create_file(
-        &path,
-        &strip(
-        r#"
-          ## Thread
+      create_file(&path, &strip(content.to_string())).unwrap();
 
-          Cool stuff bro
+      let tweets = File::new(&path).parse();
 
-          This tweet exceeds Twitter's character limit.  Writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space.
-      "#
-          .into(),
-        ),
-      )
-      .unwrap();
-
-      let file = File::new(&path);
-
-      assert!(file.parse().is_err());
+      assert!(tweets.is_err());
     });
   }
 }

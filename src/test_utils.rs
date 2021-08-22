@@ -10,13 +10,15 @@ macro_rules! in_temp_dir {
   };
 }
 
-#[cfg(test)]
 pub fn strip(s: String) -> String {
-  dedent(s.strip_prefix('\n').unwrap())
+  if s.starts_with('\n') {
+    return dedent(s.strip_prefix('\n').unwrap());
+  }
+  dedent(&s)
 }
 
 pub fn create_file(path: &Path, content: &str) -> Result<()> {
-  let mut file = FSFile::create(path)?;
+  let mut file = TestFile::create(path)?;
   file.write_all(content.as_bytes())?;
   Ok(())
 }
