@@ -16,17 +16,22 @@ name = "threader"
 path = "src/main.rs"
 
 [dependencies]
-dotenv         = "0.15.0"
+dirs           = "4.0.0"
 egg-mode       = "0.16.0"
 pulldown-cmark = "0.8.0"
 snafu          = "0.6.10"
 structopt      = "0.3.22"
+toml           = "0.5.8"
+xdg            = "2.4.0"
 
 [dependencies.tokio]
 version  = "1.10.0"
 features = ["full"]
 
+[dependencies.serde]
+version  = "1.0.0"
+features = ["derive"]
+
 [dev-dependencies]
-rstest   = "0.11.0"
+indoc    = "1.0.3"
 tempfile = "3.2.0"
-textwrap = "0.14.2"

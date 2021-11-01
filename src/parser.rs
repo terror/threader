@@ -1,5 +1,9 @@
 use crate::common::*;
 
+/// The `Parser` struct holds the content to parse `content` as a string and
+/// uses the `MarkdownParser` struct provided by the pulldown_cmark crate
+/// internally to parse that content.
+
 #[derive(Debug, Clone)]
 pub struct Parser<'a> {
   content: &'a str,
@@ -12,7 +16,9 @@ impl<'a> Parser<'a> {
     }
   }
 
-  pub fn between(&self, tag: Tag) -> Vec<String> {
+  /// Extracts text in between a given `Tag` using a newly created
+  /// `MarkdownParser` instance.
+  pub fn extract_between(&self, tag: Tag) -> Vec<String> {
     let parser = MarkdownParser::new(self.content);
 
     let mut inside = false;

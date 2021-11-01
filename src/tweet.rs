@@ -1,6 +1,8 @@
 use crate::common::*;
 
-const LIMIT: usize = 280;
+/// A `Tweet` instance simply stores the content of the tweet, and includes
+/// length validation upon calls to the constructor `Tweet::new()`, taking into
+/// account Twitter's character limit of 280.
 
 #[derive(Debug, Clone)]
 pub struct Tweet {
@@ -13,9 +15,9 @@ impl Tweet {
 
     let size = content.chars().count();
 
-    if size > LIMIT {
+    if size > CHARACTER_LIMIT {
       return Err(Error::CharacterLimit {
-        over_by: size - LIMIT,
+        over_by: size - CHARACTER_LIMIT,
         content,
       });
     }

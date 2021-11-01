@@ -1,35 +1,43 @@
 // std
 pub use std::{
-  env, fmt, fs,
+  fmt::{self, Display, Formatter},
+  fs,
   io::{self, prelude::*},
   path::{Path, PathBuf},
 };
 
 // dependencies
-pub use dotenv::dotenv;
-pub use egg_mode::{self, auth, tweet::DraftTweet, KeyPair, Response, Token};
-pub use pulldown_cmark::{Event, Parser as MarkdownParser, Tag};
-pub use snafu::{ResultExt, Snafu};
-pub use structopt::StructOpt;
-pub use tokio;
+pub use {
+  dirs,
+  egg_mode::{self, auth, tweet::DraftTweet, KeyPair, Response, Token},
+  pulldown_cmark::{Event, Parser as MarkdownParser, Tag},
+  serde::{Deserialize, Serialize},
+  snafu::{ResultExt, Snafu},
+  structopt::StructOpt,
+  tokio, toml, xdg,
+};
 
 // test dependencies
 #[cfg(test)]
-pub use {
-  rstest::*, std::fs::File as TestFile, tempfile::TempDir, textwrap::dedent,
-};
+pub use {indoc::indoc, std::env, tempfile::TempDir};
 
-// modules used in tests
+// test modules
 #[cfg(test)]
 pub use crate::test_utils::*;
 
+// modules
+pub(crate) use crate::error;
+
 // struct and enums
 pub use crate::{
-  client::Client,
-  error::{Error, Result},
-  file::File,
-  opt::Opt,
-  parser::Parser,
-  prefix::Prefix,
-  tweet::Tweet,
+  client::Client, config::Config, error::Error, file::File, opt::Opt,
+  parser::Parser, prefix::Prefix, tweet::Tweet,
 };
+
+// type aliases
+pub type Result<T, E = Error> = std::result::Result<T, E>;
+
+// contstants
+pub const MARKDOWN: &str = "md";
+pub const CHARACTER_LIMIT: usize = 280;
+pub const CONFIG_FILE_NAME: &str = ".threader.toml";

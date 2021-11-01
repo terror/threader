@@ -10,15 +10,10 @@ macro_rules! in_temp_dir {
   };
 }
 
-pub fn strip(s: String) -> String {
-  if s.starts_with('\n') {
-    return dedent(s.strip_prefix('\n').unwrap());
-  }
-  dedent(&s)
-}
-
-pub fn create_file(path: &Path, content: &str) -> Result<()> {
-  let mut file = TestFile::create(path)?;
-  file.write_all(content.as_bytes())?;
-  Ok(())
+/// Creates a new file given a reference to a `Path` instance `path` and the
+/// files content `content` to be written to the file.
+pub fn create_file_with_content<'a>(path: &'a Path, content: &str) -> &'a Path {
+  let mut file = std::fs::File::create(path).unwrap();
+  file.write_all(content.as_bytes()).unwrap();
+  path
 }
