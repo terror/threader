@@ -1,5 +1,9 @@
 set dotenv-load
 
+alias t := test
+alias b := build
+alias f := fmt
+
 default:
 	just --list
 
@@ -9,7 +13,7 @@ build:
 	cargo build
 
 test:
-	cargo test -- --test-threads=1
+	cargo test
 
 clippy:
   cargo clippy --all-targets --all-features
@@ -38,6 +42,12 @@ usage:
 
 sloc:
   @cat src/*.rs | sed '/^\s*$/d' | wc -l
+
+install:
+  cargo install --path .
+
+pr: ci
+	gh pr create --web
 
 done BRANCH=`git rev-parse --abbrev-ref HEAD`:
   git checkout master

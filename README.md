@@ -24,14 +24,14 @@ the following information:
 - Consumer key and secret pair
 - Access token key and secret pair
 
-Once you have the information above set them in a `.env` file within the
-project root:
+Once you have the information above, set them in a configuration file called
+`.threader.toml` in any one of the [XDG base directories](https://wiki.archlinux.org/title/XDG_Base_Directory).
 
-```.
-CONSUMER_KEY=
-CONSUMER_SECRET=
-ACCESS_TOKEN_KEY=
-ACCESS_TOKEN_SECRET=
+```toml
+consumer_key=
+consumer_secret=
+access_token_key=
+access_token_secret=
 ```
 
 Here is a file called `thread.md` which we want to tweet. We can specify an
