@@ -1,40 +1,52 @@
 use crate::common::*;
 
+/// The `File` struct is successfully constructed given a path to a markdown
+/// file `path` and provides a single method `parse` able of parsing the
+/// contents of the file into a list of `Tweet` instances.
+
 #[derive(Debug)]
 pub struct File<'a> {
   path: &'a Path,
 }
 
 impl<'a> File<'a> {
-  pub fn new(path: &'a Path) -> Self {
-    Self {
-      path,
+  /// Creates a new instance of `File` ensuring that the given path `path` is a
+  /// file that contains the appropriate extension, '.md'.
+  pub fn new(path: &'a Path) -> Result<Self> {
+    if let Some(extension) = path.extension() {
+      if extension == MARKDOWN {
+        return Ok(Self {
+          path,
+        });
+      }
     }
+    Err(Error::ConstructFile {
+      path: path.to_owned(),
+    })
   }
 
+  /// Parses the contents of the given markdown file path and returns the
+  /// content in the form of a `Vec<Tweet>`, tweetable by a `Client` instance.
   pub fn parse(&self) -> Result<Vec<Tweet>> {
     let content = fs::read_to_string(&self.path)?;
 
     let parser = Parser::new(&content);
 
-    let title = parser.between(Tag::Heading(2)).first().cloned();
-
-    let paragraphs = parser.between(Tag::Paragraph);
+    let title = parser.extract_between(Tag::Heading(2)).first().cloned();
+    let paragraphs = parser.extract_between(Tag::Paragraph);
 
     let mut tweets = Vec::new();
 
     for (i, content) in paragraphs.iter().enumerate() {
       let index = i as i64;
-      match index {
-        0 => tweets.push(Tweet::new(
-          Prefix::new(index + 1, paragraphs.len() as i64, &title),
-          content.to_string(),
-        )?),
-        _ => tweets.push(Tweet::new(
-          Prefix::new(index + 1, paragraphs.len() as i64, &None),
-          content.to_string(),
-        )?),
-      }
+      tweets.push(Tweet::new(
+        Prefix::new(
+          index + 1,
+          paragraphs.len() as i64,
+          if index == 0 { &title } else { &None },
+        ),
+        content.to_string(),
+      )?)
     }
 
     Ok(tweets)
@@ -45,51 +57,76 @@ impl<'a> File<'a> {
 mod tests {
   use super::*;
 
-  #[rstest]
-  #[case("", 0)]
-  #[case("hello, world!", 1)]
-  #[case(
-    r#"
-    ## Title
+  const FILE_PATH: &str = "thread.md";
 
-    Tweet A
-
-    Tweet B
-
-    Tweet C
-  "#,
-    3
-  )]
-  fn parse(#[case] content: &str, #[case] length: usize) {
-    in_temp_dir!({
-      let path = env::current_dir().unwrap().join("thread.md");
-
-      create_file(&path, &strip(content.to_owned())).unwrap();
-
-      let tweets = File::new(&path).parse();
-
-      assert!(tweets.is_ok());
-      assert_eq!(tweets.unwrap().len(), length);
-    });
+  struct Fixture {
+    content: &'static str,
+    length:  usize,
+    fail:    bool,
   }
 
-  #[rstest]
-  #[case(r#"
-    ## Thread
+  fn fixtures() -> Vec<Fixture> {
+    let mut cases = Vec::new();
 
-    Cool stuff bro
-
-    This tweet exceeds Twitter's character limit.  Writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space.
-  "#)]
-  fn exceed_character_limit(#[case] content: &str) {
-    in_temp_dir!({
-      let path = env::current_dir().unwrap().join("thread.md");
-
-      create_file(&path, &strip(content.to_string())).unwrap();
-
-      let tweets = File::new(&path).parse();
-
-      assert!(tweets.is_err());
+    cases.push(Fixture {
+      content: "",
+      length:  0,
+      fail:    false,
     });
+
+    cases.push(Fixture {
+      content: "hello, world!",
+      length:  1,
+      fail:    false,
+    });
+
+    cases.push(Fixture {
+      content: indoc! {"
+      ## Title
+
+      Tweet A
+
+      Tweet B
+
+      Tweet C
+    "},
+      length:  3,
+      fail:    false,
+    });
+
+    cases.push(Fixture {
+      content: indoc! {"
+      ## Thread
+
+      Threader is cool!
+
+      This tweet exceeds Twitter's character limit.  Writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space, writing to fill up space.
+    "},
+      length:  3,
+      fail:    true,
+    });
+
+    cases
+  }
+
+  #[test]
+  fn parse() {
+    for fixture in fixtures() {
+      in_temp_dir!({
+        let tweets = File::new(&create_file_with_content(
+          &env::current_dir().unwrap().join(FILE_PATH),
+          fixture.content,
+        ))
+        .unwrap()
+        .parse();
+
+        if fixture.fail {
+          assert!(tweets.is_err());
+        } else {
+          assert!(tweets.is_ok());
+          assert_eq!(tweets.unwrap().len(), fixture.length);
+        }
+      });
+    }
   }
 }
